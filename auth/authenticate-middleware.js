@@ -2,30 +2,24 @@
   complete the middleware code to check if the user is logged in
   before granting access to the next middleware/route handler
 */
-const bcrypt = require("bcryptjs")
-const Users = require("../users/user-model")
+const jwt = require('jsonwebtoken')
+const jsec = process.env.JWT_SECRET || 'bologne'
+module.exports = (req,res,next) =>{
 
+  const {token} = req.headers
+  const decoded = token
+  ? jwt.verify(token,jsec)
+  : false;
 
-module.exports = () => {
-  const authErr = {
-    message: "Invalid Token",
+  if (decoded){
+    req.token = decoded
+    next()
   }
+  else{
+    res.status(401).json({ you: 'shall not pass!' });
 
-  return async (req, res, next) => {
-    try {
-      const { token } = req.headers
-      if (!token) {
-        return res.status(401).json(authErr)
-      }
-      const user = await usersModel.findBy({ username }).first()
-      if (!user) {
-        return res.status(401).json({authErr})
-      }
-
-     
-      next()
-    } catch (err) {
-      next(err)
-    }
   }
 }
+
+
+ 
