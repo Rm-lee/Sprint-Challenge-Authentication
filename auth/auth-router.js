@@ -1,13 +1,23 @@
 const router = require('express').Router();
-
+const jwt = require("jsonwebtoken")
+const restrict = require("./authenticate-middleware")
+const secrets = require("../config/secrets")
+const Users = require("../users/user-model")
 router.post('/register', (req, res) => {
   // implement registration
- 
+ Users.add(req.body)
+ .then(ret => {
+   res.status(201).json(ret)
+ })
+ .catch( err => {
+  res.status(500).json(err)
+ })
   
 });
 
-router.post('/login', (req, res) => {
+router.get('/login', (req, res) => {
   // implement login
+  res.status(200).json({me:"done"})
 });
 
 
