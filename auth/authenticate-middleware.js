@@ -4,6 +4,28 @@
 */
 const bcrypt = require("bcryptjs")
 const Users = require("../users/user-model")
-module.exports = (req, res, next) => {
-  res.status(401).json({ you: 'shall not pass!' });
-};
+
+
+module.exports = () => {
+  const authErr = {
+    message: "Invalid Token",
+  }
+
+  return async (req, res, next) => {
+    try {
+      const { token } = req.headers
+      if (!token) {
+        return res.status(401).json(authErr)
+      }
+      const user = await usersModel.findBy({ username }).first()
+      if (!user) {
+        return res.status(401).json({authErr})
+      }
+
+     
+      next()
+    } catch (err) {
+      next(err)
+    }
+  }
+}
